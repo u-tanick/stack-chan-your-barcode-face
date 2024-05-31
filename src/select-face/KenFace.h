@@ -142,10 +142,6 @@ namespace m5avatar
 
       int x0 = isLeft ? x - 45: x + 45;
       int y0 = y + 15;
-
-//      spi->fillRect(x, y, 2, 2, TFT_RED);
-//      spi->fillRect(x0, y0, 2, 2, TFT_BLUE);
-
       // 微調整
       x0 = isLeft ? x0 - 10: x0;
       y0 = isLeft ? y0 - 2: y0;

@@ -104,13 +104,14 @@ namespace m5avatar
       int x = rect.getLeft() - w / 2;
       int y = rect.getTop() - h / 2 + breath * 2;
 
-      x = x + 22;
-      spi->fillEllipse(x, y, 12, 8, primaryColor);
-      spi->fillEllipse(x, y, 10, 6, backgroundColor);
-      spi->fillEllipse(x, y+15, 12, 8, primaryColor);
-      spi->fillEllipse(x, y+15, 10, 6, backgroundColor);
-      spi->fillEllipse(x+10, y+1, 10, 6, backgroundColor);
-      spi->fillEllipse(x+10, y+12, 10, 6, backgroundColor);
+      int x0 = x + 22;
+      int y0 = y;
+      spi->fillEllipse(x0, y0, 12, 8, primaryColor);
+      spi->fillEllipse(x0, y0, 10, 6, backgroundColor);
+      spi->fillEllipse(x0, y0+15, 12, 8, primaryColor);
+      spi->fillEllipse(x0, y0+15, 10, 6, backgroundColor);
+      spi->fillEllipse(x0+10, y0+1, 10, 6, backgroundColor);
+      spi->fillEllipse(x0+10, y0+12, 10, 6, backgroundColor);
     }
   };
 

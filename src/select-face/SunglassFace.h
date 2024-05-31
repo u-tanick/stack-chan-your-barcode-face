@@ -40,7 +40,7 @@ namespace m5avatar
 
       int temple_xr = x + 45;
       int temple_yr = y - 10 + fix_pos_y;
-      int temple_wr = 35;
+      int temple_wr = 50;
       int temple_hr = 20;
       int temple_xl = x - 90;
       int temple_yl = y - 10 + fix_pos_y;
