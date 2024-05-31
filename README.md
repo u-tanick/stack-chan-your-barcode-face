@@ -4,6 +4,12 @@ M5Stack の QRコードスキャナーユニット（STM32F030）を使用して
 
 顔は　目　眉　口　それぞれ　10種類あり、バーコードのナンバーをもとにそれぞれランダムで決定されます。
 
+## platformio.iniの修正
+
+Cloneした環境に合わせて、25行目のフォルダパスを正しく設定してください。今回用に改造したm5stack-avatarを使っているため、個別にライブラリのパスを通す必要があります。
+
+> <終端フォルダまでのパス>C:\Users\hoge\Documents\PlatformIO\Projects\stack-chan-your-barcode-face\lib\m5stack-avatar-custom-u-tanick
+
 ## STM32F030の設定方法
 
 M5Stack Core2 AWS版に、以下のように接続します。
