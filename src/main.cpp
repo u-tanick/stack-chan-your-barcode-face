@@ -3,10 +3,10 @@
 #include <Avatar.h>
 #include <Ticker.h>
 #include <ServoEasing.hpp> // https://github.com/ArminJo/ServoEasing       
+#include <M5UnitQRCode.h>
 
 #include "select-face/AllFaces.h"
 #include "select-face/LaputaFace.h"
-#include "M5UnitQRCode/M5UnitQRCode.h"
 
 using namespace m5avatar;
 
