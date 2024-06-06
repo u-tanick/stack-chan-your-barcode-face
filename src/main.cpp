@@ -52,9 +52,9 @@ Avatar avatar;
 ColorPalette *cp;
 
 // Wifi & VOICEVOX_APIKEY
-const char *SSID = "Buffalo-G-B9D8";
-const char *PASSWORD = "dxtktuax7xhv6";
-#define VOICEVOX_APIKEY "p0I89_X-o2E-251"
+const char *SSID = "aaa";
+const char *PASSWORD = "aaa";
+#define VOICEVOX_APIKEY "aaa"
 
 // Voicevox用パラメータ
 String VOICEVOX_API_KEY = "";
