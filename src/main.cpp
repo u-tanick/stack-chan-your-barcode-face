@@ -1,12 +1,26 @@
 #include <M5Unified.h>
+// グラフィック関連
 #include <M5GFX.h>
 #include <Avatar.h>
-#include <Ticker.h>
-#include <ServoEasing.hpp> // https://github.com/ArminJo/ServoEasing       
-#include <M5UnitQRCode.h>
-
 #include "select-face/AllFaces.h"
 #include "select-face/LaputaFace.h"
+// サーボモーター関連
+#include <ServoEasing.hpp> // https://github.com/ArminJo/ServoEasing       
+#include <Ticker.h>
+// QRコードリーダー関連
+#include <M5UnitQRCode.h>
+// Wifi関連
+#include <WiFiClientSecure.h>
+// オーディオ関連
+#include "Audio.h"
+#include "AudioOutputM5Speaker.h"
+#include "AudioGeneratorMP3.h"
+#include "AudioFileSourceICYStream.h"
+#include "AudioFileSourceBuffer.h"
+#include <ArduinoJson.h>
+#include "AudioFileSourceHTTPSStream.h"
+// Voicevox関連
+#include "WebVoiceVoxTTS.h"
 
 using namespace m5avatar;
 
@@ -35,8 +49,23 @@ using namespace m5avatar;
 #endif
 
 Avatar avatar;
+ColorPalette *cp;
+
+// Wifi & VOICEVOX_APIKEY
+const char *SSID = "Buffalo-G-B9D8";
+const char *PASSWORD = "dxtktuax7xhv6";
+#define VOICEVOX_APIKEY "p0I89_X-o2E-251"
+
+// Voicevox用パラメータ
+String VOICEVOX_API_KEY = "";
+String TTS_SPEAKER_NO = "58"; // 58 : 猫使ビィ　ノーマル
+String TTS_SPEAKER = "&speaker=";
+String TTS_PARMS = TTS_SPEAKER + TTS_SPEAKER_NO;
+String speech_text = "";
+
+// バーコードリーダー用変数
 M5UnitQRCodeI2C qrcode_i2c;
-M5UnitQRCodeUART qrcode_uart;
+// M5UnitQRCodeUART qrcode_uart; // UARTは不使用
 
 // バーコード関連用変数
 uint8_t buffer[512] = {0};
@@ -48,14 +77,123 @@ int parts_num = 10;
 int tone_def = 1000;
 int tone_dif = 100;
 
+
+
+// 発話テキスト選択
+String select_speech(int slct_num) {
+  static String response = "";
+  if (slct_num == 0) {
+    // 0: ノーマル : 3 : ずんだもん
+    response = "もう疲れちゃって　全然動けなくてェ…";
+  }
+  else if (slct_num == 1) {
+    // 1: にょろん : 53 : きがしまそうりん
+    response = "ウワァッ！見つかっタァ！";
+  }
+  else if (slct_num == 2) {
+    // 2: ダンポー : 42 : ちび式じい
+    response = "友達のところに　行きたいなァ";
+  }
+  else if (slct_num == 3) {
+    // 3: くちびる : 66 :  : もち子さん（セクシー）
+    response = "諸行無常の鐘の音";
+  }
+  else if (slct_num == 4) {
+    // 4: うわーん : 76 :  : ずんだもん（なみだめ）
+    response = "ウニャーー";
+  }
+  else if (slct_num == 5) {
+    // 5: ちいかわ : 62 : 中国うさぎ（おどろき）
+    response = "ハァ…　困ったなァ　まさか友達と　はぐれちゃうなんてェ…";
+  }
+  else if (slct_num == 6) {
+    // 6: めがね　 : 8 : 春日部つむぎ
+    response = "アチチッ！！";
+  }
+  else if (slct_num == 7) {
+    // 7: けんしろ : 83 :  : 青山劉生（喜び）
+    response = "アレ？　キミ　僕が見えるの？　僕はコログ　森の妖精さ！";
+  }
+  else if (slct_num == 8) {
+    // 8: ケイ     : 49 : ナースロボ（恐怖）
+    response = "ピシャーーーン！！";
+  }
+  else if (slct_num == 9) {
+    // 9: アリス   : 48 : ナースロボ（楽楽）
+    response = "ブラジルのみなさーーーん　きこえますかーーーー";
+  }
+  else {
+    // スペシャル顔＝ラピュタロボは発話しない
+    response = "";
+  }
+  Serial.println("====================");
+  Serial.println(response);
+  Serial.println("====================");
+  return response;
+}
+
+// 声帯選択
+String select_voice(int slct_num) {
+  static String response = "";
+  if (slct_num == 0) {
+    // 0: ノーマル : 3 : ずんだもん
+    response = "3";
+  }
+  else if (slct_num == 1) {
+    // 1: にょろん : 53 : きがしまそうりん
+    response = "53";
+  }
+  else if (slct_num == 2) {
+    // 2: ダンポー : 42 : ちび式じい
+    response = "42";
+  }
+  else if (slct_num == 3) {
+    // 3: くちびる : 66 :  : もち子さん（セクシー）
+    response = "66";
+  }
+  else if (slct_num == 4) {
+    // 4: うわーん : 76 :  : ずんだもん（なみだめ）
+    response = "76";
+  }
+  else if (slct_num == 5) {
+    // 5: ちいかわ : 62 : 中国うさぎ（おどろき）
+    response = "62";
+  }
+  else if (slct_num == 6) {
+    // 6: めがね　 : 8 : 春日部つむぎ
+    response = "8";
+  }
+  else if (slct_num == 7) {
+    // 7: けんしろ : 83 :  : 青山劉生（喜び）
+    response = "83";
+  }
+  else if (slct_num == 8) {
+    // 8: ケイ     : 49 : ナースロボ（恐怖）
+    response = "49";
+  }
+  else if (slct_num == 9) {
+    // 9: アリス   : 48 : ナースロボ（楽楽）
+    response = "48";
+  }
+  else {
+    // スペシャル顔＝ラピュタロボは発話しない
+    response = "";
+  }
+  Serial.println("====================");
+  Serial.println(response);
+  Serial.println("====================");
+  return response;
+}
+
 // アバター関連初期化
-ColorPalette *cp;
 void init_avatar()
 {
   avatar.setFace(new AllFaces());
   avatar.setEyeType(0);
   avatar.setEyeBlowType(0);
   avatar.setMouthType(0);
+  TTS_SPEAKER_NO = select_voice(0);
+  speech_text = select_speech(0);
   cp->set(COLOR_PRIMARY, TFT_BLACK);
   cp->set(COLOR_BACKGROUND, TFT_WHITE);
   avatar.setColorPalette(*cp);
@@ -68,6 +206,8 @@ void select_avatar(int num)
   avatar.setEyeType(num);
   avatar.setEyeBlowType(num);
   avatar.setMouthType(num);
+  TTS_SPEAKER_NO = select_voice(num);
+  speech_text = select_speech(num);
 }
 
 // バーコード関連初期化
@@ -134,8 +274,80 @@ void moveRandom() {
   }
 }
 
+//---------------------------------------------
+
+/// set M5Speaker virtual channel (0-7)
+static constexpr uint8_t m5spk_virtual_channel = 0;
+static AudioOutputM5Speaker out(&M5.Speaker, m5spk_virtual_channel);
+AudioGeneratorMP3 *mp3;
+AudioFileSourceICYStream *file;
+AudioFileSourceBuffer *buff;
+
+// 発話実行（mp3再生）
+void playMP3(AudioFileSourceBuffer *buff){
+  mp3->begin(buff, &out);
+}
+
+// 音量に合わせた口の開閉
+void lipSync(void *args)
+{
+  float gazeX, gazeY;
+  int level = 0;
+  DriveContext *ctx = (DriveContext *)args;
+  Avatar *avatar = ctx->getAvatar();
+  for (;;)
+  {
+    level = abs(*out.getBuffer());
+    if(level<100) level = 0;
+    if(level > 15000)
+    {
+      level = 15000;
+    }
+    float open = (float)level/15000.0;
+    float fix_o = -1*open*open+2*open; // 口の開閉を線形から非線形に微調整
+//     Serial.println(fix_o);
+    avatar->setMouthOpenRatio(fix_o);
+    avatar->getGaze(&gazeY, &gazeX);
+    avatar->setRotation(gazeX * 5);
+    delay(50);
+  }
+}
+
+
 void setup() {
-  M5.begin();
+
+  // M5 Config初期設定
+  auto cfg = M5.config();
+  cfg.external_spk = true;    /// use external speaker (SPK HAT / ATOMIC SPK)
+  M5.begin(cfg);
+  { /// custom setting
+    auto spk_cfg = M5.Speaker.config();
+    /// Increasing the sample_rate will improve the sound quality instead of increasing the CPU load.
+    spk_cfg.sample_rate = 96000; // default:64000 (64kHz)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
+    spk_cfg.task_pinned_core = APP_CPU_NUM;
+    M5.Speaker.config(spk_cfg);
+  }
+  M5.Speaker.begin();
+
+  // Wifi初期設定
+  Serial.println("Connecting to WiFi");
+  WiFi.disconnect();
+  WiFi.softAPdisconnect(true);
+  WiFi.mode(WIFI_STA);  
+  WiFi.begin(SSID, PASSWORD);
+
+  M5.update();
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.println("...Connecting to WiFi");
+    delay(1000);   
+  }
+  Serial.println("Connected");
+
+  // VOICEVOX初期設定
+  VOICEVOX_API_KEY = VOICEVOX_APIKEY;
+  M5.Speaker.setVolume(200);
+  mp3 = new AudioGeneratorMP3();
+
 
   // M5Stack Avatar初期設定
   cp = new ColorPalette();
@@ -144,6 +356,8 @@ void setup() {
   avatar.setColorPalette(*cp);
   avatar.setFace(new AllFaces());
   avatar.init(8);
+  avatar.addTask(lipSync, "lipSync");
+  init_avatar();
 
   // M5UnitQRCode初期設定
   while (!qrcode_i2c.begin(&Wire, UNIT_QRCODE_ADDR, QR_PIN_1, QR_PIN_2, 100000U)) {
@@ -159,21 +373,23 @@ void setup() {
                      START_DEGREE_VALUE_X + servo_offset_x,
                      DEFAULT_MICROSECONDS_FOR_0_DEGREE,
                      DEFAULT_MICROSECONDS_FOR_180_DEGREE)) {
-    Serial.print("Error attaching servo x");
+    Serial.print("Error attaching servo x\n");
   }
+  Serial.print("Success attached servo x\n");
   if (servo_y.attach(SERVO_PIN_Y,
                      START_DEGREE_VALUE_Y + servo_offset_y,
                      DEFAULT_MICROSECONDS_FOR_0_DEGREE,
                      DEFAULT_MICROSECONDS_FOR_180_DEGREE)) {
-    Serial.print("Error attaching servo y");
+    Serial.print("Error attaching servo y\n");
   }
+  Serial.print("Success attached servo y\n");
   servo_x.setEasingType(EASE_QUADRATIC_IN_OUT);
   servo_y.setEasingType(EASE_QUADRATIC_IN_OUT);
   setSpeedForAllServos(60);
 
   // サーボモーター初期位置設定
   moveXY(START_DEGREE_VALUE_X, START_DEGREE_VALUE_Y, 500);
-  Serial.println("Randum move");
+  Serial.println("Init posisioning");
 
 }
 
@@ -277,11 +493,15 @@ void loop() {
             cp->set(COLOR_BACKGROUND, TFT_BLACK);
             avatar.setColorPalette(*cp);
             avatar.setFace(new LaputaFace());
+            // 声をセット
           } else {
             // 個別の顔パーツをセット
             avatar.setEyeType(your_e);
             avatar.setEyeBlowType(your_eb);
             avatar.setMouthType(your_m);
+            // 口の形に合わせて声とテキストをセット
+            TTS_SPEAKER_NO = select_voice(your_m);
+            speech_text = select_speech(your_m);
           }
           M5.Speaker.tone(tone_vol, 500);
           break;
@@ -315,8 +535,12 @@ void loop() {
     } else if(slct == 11) {
       slct = 0;
       select_avatar(slct);
+      TTS_SPEAKER_NO = select_voice(slct);
+      speech_text = select_speech(slct);
     } else {
       select_avatar(slct);
+      TTS_SPEAKER_NO = select_voice(slct);
+      speech_text = select_speech(slct);
     }
   }
 
@@ -324,9 +548,33 @@ void loop() {
    * ランダム動作 ON/OFF
   */
   if (M5.BtnC.pressedFor(1000)) {
+    /*
     M5.Speaker.tone(2000, 100);
     avatar.setSpeechText("");
     Serial.println("Randum move");
     moveRandom();
+    */
+    M5.Speaker.tone(1000, 100);
+    Serial.println(" Btn Pressed ");
+    delay(200);
+    M5.Speaker.end();
+
+    if (!mp3->isRunning()) {
+      if(speech_text != "") {
+        TTS_PARMS = TTS_SPEAKER + TTS_SPEAKER_NO;
+        Voicevox_tts((char*)speech_text.c_str(), (char*)TTS_PARMS.c_str());
+      } else {
+        // スペシャル顔はしゃべらない
+      }
+    }
+  }
+
+  if (mp3->isRunning()) {
+    if (!mp3->loop()) {
+      mp3->stop();
+      if(file != nullptr){delete file; file = nullptr;}
+      Serial.println("mp3 stop");
+    }
+    delay(1);
   }
 }

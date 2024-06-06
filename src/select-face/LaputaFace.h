@@ -20,12 +20,6 @@ namespace m5avatar
 
     void draw(M5Canvas *spi, BoundingRect rect, DrawContext *ctx)
     {
-      // 今回未使用
-//      Gaze g = ctx->getGaze();
-//      uint32_t offsetX = g.getHorizontal() * 3;
-//      uint32_t offsetY = g.getVertical() * 3;
-//      float openRatio = ctx->getEyeOpenRatio();
-
       Expression exp = ctx->getExpression();
       ColorPalette *cp = ctx->getColorPalette();
       uint16_t primaryColor = ctx->getColorDepth() == 1 ? 1 : cp->get(COLOR_PRIMARY);
@@ -91,6 +85,7 @@ namespace m5avatar
       ColorPalette *cp = ctx->getColorPalette();
       uint16_t primaryColor = ctx->getColorDepth() == 1 ? 1 : cp->get(COLOR_PRIMARY);
       uint16_t backgroundColor = ctx->getColorDepth() == 1 ? ERACER_COLOR : cp->get(COLOR_BACKGROUND);
+      float openRatio = ctx->getMouthOpenRatio();
 
       // darkkhaki / #BDB76B
       uint16_t basefaceColor = 0;
@@ -163,8 +158,13 @@ namespace m5avatar
       }
       else
       {
-        spi->fillCircle(mx0, my1, mr0, backgroundColor);
-        spi->fillCircle(mx0, my2, mr0, backgroundColor);
+        if (openRatio > 0.3) {
+          spi->fillCircle(mx0, my1, mr0, TFT_RED);
+          spi->fillCircle(mx0, my2, mr0, TFT_RED);
+        } else {
+          spi->fillCircle(mx0, my1, mr0, backgroundColor);
+          spi->fillCircle(mx0, my2, mr0, backgroundColor);
+        }
       }
 
       // e0 : GV183 : ex0, ey0 : 204, 187
