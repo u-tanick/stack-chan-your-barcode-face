@@ -45,7 +45,6 @@ namespace m5avatar
         int h = 4;
         spi->fillRect(x1, y1, w, h, primaryColor);
       }
-
     }
   };
 
@@ -68,21 +67,22 @@ namespace m5avatar
       uint32_t y = rect.getTop();
       uint16_t primaryColor = ctx->getColorDepth() == 1 ? 1 : ctx->getColorPalette()->get(COLOR_PRIMARY);
 
+      int h0 = 30;
+      int x0 = x;
+      int y0 = y - 22;
       int x1, y1, x2, y2, x3, y3;
-      height = 30;
-      y = y - 22;
       if (isLeft) {
-        y = y - 4;
-        x1 = x + width*0.6;
-        height = height + 3;
+        y0 = y0 - 4;
+        x1 = x0 + width*0.6;
+        h0 = h0 + 3;
       } else {
-        x1 = x - width;
+        x1 = x0 - width;
       }
-      x2 = x - width*1.5;
-      x3 = x + width*0.9;
-      y1 = y;
-      y2 = y + height;
-      y3 = y + height;
+      x2 = x0 - width*1.5;
+      x3 = x0 + width*0.9;
+      y1 = y0;
+      y2 = y0 + h0;
+      y3 = y0 + h0;
       spi->fillTriangle(x1, y1, x2, y2, x3, y3, primaryColor);
     }
   };
@@ -111,21 +111,21 @@ namespace m5avatar
       float breath = fmin(1.0f, ctx->getBreath());
       float openRatio = ctx->getMouthOpenRatio();
 
-      int h = 25;
-      int w = 64;
-      int x = rect.getLeft() - 8;
-      int y = rect.getTop() + 20;
-      spi->fillEllipse(x, y, w, h, TFT_RED);
+      int h0 = 25;
+      int w0 = 64;
+      int x0 = rect.getLeft() - 8;
+      int y0 = rect.getTop() + 20 - openRatio*12;
+      spi->fillEllipse(x0, y0, w0, h0, TFT_RED);
 
-      int edge_x1_l = x-w-5;
-      int edge_x2_l = x-w+7;
-      int edge_x3_l = x-w+7;
-      int edge_x1_r = x+w+5;
-      int edge_x2_r = x+w-7;
-      int edge_x3_r = x+w-7;
-      int edge_y1 = y;
-      int edge_y2 = y+h/2;
-      int edge_y3 = y-h/2;
+      int edge_x1_l = x0-w0-5;
+      int edge_x2_l = x0-w0+7;
+      int edge_x3_l = x0-w0+7;
+      int edge_x1_r = x0+w0+5;
+      int edge_x2_r = x0+w0-7;
+      int edge_x3_r = x0+w0-7;
+      int edge_y1 = y0;
+      int edge_y2 = y0+h0/2;
+      int edge_y3 = y0-h0/2;
       spi->fillTriangle(edge_x1_l, edge_y1, edge_x2_l, edge_y2, edge_x3_l, edge_y3, TFT_RED);
       spi->fillTriangle(edge_x1_r, edge_y1, edge_x2_r, edge_y2, edge_x3_r, edge_y3, TFT_RED);
 
@@ -133,11 +133,11 @@ namespace m5avatar
       int offset_y = 14;
       int philtrum_w = 14;
       int philtrum_h = 20;
-      int x1_ptm = x;
-      int x2_ptm = x - philtrum_w;
-      int x3_ptm = x + philtrum_w;
-      int y1_ptm = y - offset_y;
-      int y23_ptm = y - philtrum_w - offset_y;
+      int x1_ptm = x0;
+      int x2_ptm = x0 - philtrum_w;
+      int x3_ptm = x0 + philtrum_w;
+      int y1_ptm = y0 - offset_y;
+      int y23_ptm = y0 - philtrum_w - offset_y;
       spi->fillTriangle(x1_ptm, y1_ptm, x2_ptm, y23_ptm, x3_ptm, y23_ptm, backgroundColor);
     }
   };

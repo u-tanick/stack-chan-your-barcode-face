@@ -456,34 +456,35 @@ namespace m5avatar
       }
       else if (eyeblowtype == 3) { // KappaFace
         int x1, y1, x2, y2, x3, y3;
-        height = 30;
-        y = y - 22;
+        int x0 = x;
+        int y0 = y - 22;
+        int h0 = 30;
         if (isLeft) {
-          y = y - 4;
-          x1 = x + width*0.6;
-          height = height + 3;
+          y0 = y0 - 4;
+          x1 = x0 + width*0.6;
+          h0 = h0 + 3;
         } else {
-          x1 = x - width;
+          x1 = x0 - width;
         }
-        x2 = x - width*1.5;
-        x3 = x + width*0.9;
-        y1 = y;
-        y2 = y + height;
-        y3 = y + height;
+        x2 = x0 - width*1.5;
+        x3 = x0 + width*0.9;
+        y1 = y0;
+        y2 = y0 + h0;
+        y3 = y0 + h0;
         spi->fillTriangle(x1, y1, x2, y2, x3, y3, primaryColor);
       }
       else if (eyeblowtype == 4) { // MaroFace
-        int mx = isLeft ? x-7 : x;
-        int my = y - 20 + 20;
+        int x0 = isLeft ? x-7 : x;
+        int y0 = y - 20 + 20;
         int rx = 16;
         int ry = 10;
         int x_offset = isLeft ? -23 : 23;
         int y_offset = isLeft ? -12 : -7;
-        spi->fillEllipse(mx+x_offset, my+y_offset, rx, ry, primaryColor);
+        spi->fillEllipse(x0+x_offset, y0+y_offset, rx, ry, primaryColor);
       }
       else if (eyeblowtype == 5) { // ChiikawaFace
-        height = 6;
-        width = isLeft ? 38 : 42;
+        int h0 = 6;
+        int w0 = isLeft ? 38 : 42;
         int x_offset = 2;
         int y_offset = -25;
         int x0 = isLeft ? x - x_offset*3 : x;
@@ -494,21 +495,21 @@ namespace m5avatar
         int a = isLeft ? 1 : -1;
         int dx = a * 5;
         int dy = a * 5;
-        x1 = isLeft ? x0 - width / 2 : x0 - width / 2;
+        x1 = isLeft ? x0 - w0 / 2 : x0 - w0 / 2;
         x2 = isLeft ? x1 - x_offset  : x1 + x_offset;
-        x4 = isLeft ? x0 + width / 2 : x0 + width / 2;
+        x4 = isLeft ? x0 + w0 / 2 : x0 + w0 / 2;
         x3 = isLeft ? x4 + x_offset  : x4 - x_offset;
-        y1 = y0 - height / 2 - dy;
-        y2 = y0 + height / 2 - dy;
-        y3 = y0 - height / 2 + dy;
-        y4 = y0 + height / 2 + dy;
+        y1 = y0 - h0 / 2 - dy;
+        y2 = y0 + h0 / 2 - dy;
+        y3 = y0 - h0 / 2 + dy;
+        y4 = y0 + h0 / 2 + dy;
         spi->fillTriangle(x1, y1, x2, y2, x3, y3, primaryColor);
         spi->fillTriangle(x2, y2, x3, y3, x4, y4, primaryColor);
       }
       else if (eyeblowtype == 6) { // SunglassFace
-        int gx = x;
-        int gy = isLeft ? y - 2: y + 2;
-        spi->fillEllipseArc(gx, gy - 20, 34, 40, 24, 26, 200, 340, primaryColor);
+        int x0 = x;
+        int y0 = isLeft ? y - 2: y + 2;
+        spi->fillEllipseArc(x0, y0 - 20, 34, 40, 24, 26, 200, 340, primaryColor);
       }
       else if (eyeblowtype == 7) { // KenFace
         int x0 = isLeft ? x - 45: x + 45;
@@ -703,7 +704,7 @@ namespace m5avatar
         int h0 = 25;
         int w0 = 64;
         int x0 = rect.getLeft() - 8;
-        int y0 = rect.getTop() + 20 - openRatio*20;
+        int y0 = rect.getTop() + 20 - openRatio*12;
         spi->fillEllipse(x0, y0, w0, h0, TFT_RED);
 
         int edge_x1_l = x0-w0-5;
@@ -858,16 +859,16 @@ namespace m5avatar
       }
       else if (mouthtype == 6) { // SunglassFace
         int x0 = rect.getLeft();
-        int y0 = rect.getTop() + 20;
+        int y0 = rect.getTop() + 15;
         int rx1 = 0;
         int rx2 = 26;
         int ry1 = 0;
-        int ry2 = 35 - (1 - openRatio)*15;
+        int ry2 = 40 - (1 - openRatio)*20;
         spi->fillEllipseArc(x0, y0, rx1, rx2, ry1, ry2, 0, 180, primaryColor);
         int x1 = x0;
-        int y1 = y0 + 24 - (1 - openRatio)*12;
+        int y1 = y0 + 28 - (1 - openRatio)*12;
         int rxt = 15;
-        int ryt = 10 - (1 - openRatio)*3;
+        int ryt = 15 - (1 - openRatio)*3;
         spi->fillEllipse(x1, y1, rxt, ryt, TFT_RED);
       }
       else if (mouthtype == 7) { // KenFace
@@ -912,7 +913,7 @@ namespace m5avatar
         int h0 = minHeight + (maxHeight/5 - minHeight) * openRatio;
         spi->fillRect(x0, y0, w0, h0, primaryColor);
       }
-      else if (mouthtype == 9) { // MeganeFace
+      else if (mouthtype == 9) { // Girl2Face
         int x0 = rect.getLeft() - 22;
         int y0 = rect.getTop() + 20 - openRatio*8;
         spi->fillEllipse(x0, y0, 12, 8, primaryColor);

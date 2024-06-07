@@ -59,7 +59,6 @@ namespace m5avatar
       reflectColor = isLeft ? M5.Lcd.color565(160,246,253) : M5.Lcd.color565(255,180,220);
       spi->fillTriangle(reflect_x_top1, reflect_y_top, reflect_x_top2, reflect_y_top, reflect_x_btm1, reflect_y_btm, reflectColor);
       spi->fillTriangle(reflect_x_top2, reflect_y_top, reflect_x_btm1, reflect_y_btm, reflect_x_btm2, reflect_y_btm, reflectColor);
-
     }
   };
 
@@ -82,9 +81,9 @@ namespace m5avatar
       uint32_t y = rect.getTop();
       uint16_t primaryColor = ctx->getColorDepth() == 1 ? 1 : ctx->getColorPalette()->get(COLOR_PRIMARY);
 
-      int gx = x;
-      int gy = isLeft ? y - 2: y + 2;
-      spi->fillEllipseArc(gx, gy - 20, 34, 40, 24, 26, 200, 340, primaryColor);
+      int x0 = x;
+      int y0 = isLeft ? y - 2: y + 2;
+      spi->fillEllipseArc(x0, y0 - 20, 34, 40, 24, 26, 200, 340, primaryColor);
     }
   };
 
@@ -110,18 +109,19 @@ namespace m5avatar
       uint16_t primaryColor = ctx->getColorDepth() == 1 ? 1 : ctx->getColorPalette()->get(COLOR_PRIMARY);
       float breath = fmin(1.0f, ctx->getBreath());
       float openRatio = ctx->getMouthOpenRatio();
-      int h = minHeight + (maxHeight - minHeight) * openRatio;
-      int w = minWidth + (maxWidth - minWidth) * (1 - openRatio);
-      int x = rect.getLeft() - w / 2;
-      int y = rect.getTop() - h / 2 + breath * 2;
 
-//      spi->fillRect(x, y, w, h, primaryColor);
-
-      int mx = x + w /2;
-      int my = y + 20;
-      spi->fillEllipseArc(mx, my, 0, 26, 0, 35, 0, 180, primaryColor);
-//      spi->fillCircle(mx, my + 28, 1, TFT_RED);
-      spi->fillEllipse(mx, my + 24, 15, 10, TFT_RED);
+      int x0 = rect.getLeft();
+      int y0 = rect.getTop() + 15;
+      int rx1 = 0;
+      int rx2 = 26;
+      int ry1 = 0;
+      int ry2 = 40 - (1 - openRatio)*20;
+      spi->fillEllipseArc(x0, y0, rx1, rx2, ry1, ry2, 0, 180, primaryColor);
+      int x1 = x0;
+      int y1 = y0 + 28 - (1 - openRatio)*12;
+      int rxt = 15;
+      int ryt = 15 - (1 - openRatio)*3;
+      spi->fillEllipse(x1, y1, rxt, ryt, TFT_RED);
     }
   };
 
