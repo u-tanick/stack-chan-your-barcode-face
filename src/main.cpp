@@ -54,9 +54,9 @@ Avatar avatar;
 ColorPalette *cp;
 
 // Wifi & VOICEVOX_APIKEY
-const char *SSID = "Buffalo-G-B9D8";
-const char *PASSWORD = "dxtktuax7xhv6";
-#define VOICEVOX_APIKEY "p0I89_X-o2E-251"
+// const char *SSID = "aaa";
+// const char *PASSWORD = "aaa";
+// #define VOICEVOX_APIKEY "aaa"
 
 // Voicevox用パラメータ
 String VOICEVOX_API_KEY = "";
@@ -87,8 +87,8 @@ String select_speech(int slct_num) {
     response = "どうもどうも、　僕は　スタックチャンです。";
   }
   else if (slct_num == 1) {
-    // 1: にょろん : 7 : ずんだもん（ツンツン）
-    response = "やめられない、　とまらない、　スタックチャンでーーーーーーす";
+    // 1: にょろん : 54 : WhiteCUL（たのしい）
+    response = "やめられない、　とまらない、　スタックチャンでーーす";
   }
   else if (slct_num == 2) {
     // 2: ダンポー : 42 : ちび式じい
@@ -96,7 +96,7 @@ String select_speech(int slct_num) {
   }
   else if (slct_num == 3) {
     // 3: くちびる : 66 :  : もち子さん（セクシー）
-    response = "春はあけぼの。やうやう白く、なりゆく山ぎは、少し明りて、紫だちたる雲の、細くたなびきたる。　　　　　　　素敵ね";
+    response = "春はあけぼの。やうやう白く、なりゆくうっふん";
   }
   else if (slct_num == 4) {
     // 4: うわーん : 76 :  : ずんだもん（なみだめ）
@@ -140,8 +140,8 @@ String select_voice(int slct_num) {
     response = "3";
   }
   else if (slct_num == 1) {
-    // 1: にょろん : 7 : ずんだもん（ツンツン）
-    response = "46";
+    // 1: にょろん : 24 : WhiteCUL（たのしい）
+    response = "54";
   }
   else if (slct_num == 2) {
     // 2: ダンポー : 42 : ちび式じい
@@ -248,7 +248,7 @@ void moveRandom() {
   for (;;) {
     // ランダムモード
     int x = random(55, 125);  // 45〜135° でランダム
-    int y = random(50, 80);   // 50〜90° でランダム
+    int y = random(50, 75);   // 50〜90° でランダム
 #ifdef ARDUINO_M5STACK_CORES3
     unifiedButton.update(); // M5.update() よりも前に呼ぶ事
 #endif
@@ -266,7 +266,7 @@ void moveRandom() {
     avatar.setSpeechText("");
 
     cnt++;
-    if (cnt == 5) {
+    if (cnt == 3) {
       Serial.println("Stop move");
       moveXY(START_DEGREE_VALUE_X, START_DEGREE_VALUE_Y, 500);
       break;
